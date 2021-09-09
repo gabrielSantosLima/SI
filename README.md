@@ -3,7 +3,7 @@
 
 ## :hourglass: Períodos (Matérias que utilizam da programação) 
 - Introdução a programação de computadores
-    - AP: Lista 1 
+    - AP I: Lista 1 
     - AP2 I: Lista 2 
     - AP2 II: Projeto 
 - Matemática Básica
