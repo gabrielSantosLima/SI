@@ -1,6 +1,6 @@
 A = [-2,-1,0,1,2]
 B = [-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6]
-
+print(11)
 resultado = []
 
 for x in A: # Pega cada valor do conjunto A
