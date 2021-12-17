@@ -1,5 +1,4 @@
 # Aluno: Gabriel dos Santos Lima
-# Matrícula: 2115310010
 # Projeto final - 1º Período de Sistemas de Informação - Projeto Prático: Rotas
 
 # Objetivo: Descobrir qual irá ser o gasto nas rotas das cidades.
