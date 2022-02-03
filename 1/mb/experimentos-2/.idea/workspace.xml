@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5ec18b5d-db13-4dfc-a8c9-69d842624d93" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../ipc/debug.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../ipc/debug.log" afterDir="false" />
-    </list>
+    <list default="true" id="5ec18b5d-db13-4dfc-a8c9-69d842624d93" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -98,7 +96,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/BelingueWorld - Versão Com Chat (TODO.md na raíz do projeto)/BelingueWorld" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../github/estudos/cursos/tdd-desenvolvimento-software-ita" />
     <property name="settings.editor.selected.configurable" value="Settings.Markdown" />
   </component>
   <component name="RunManager" selected="Gradle.experimentos-2 [run] (1)">
