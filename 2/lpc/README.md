@@ -1,4 +1,4 @@
-# Anotações sobre a matéria de LPC(Laboratório de Programação de Computadores)
+# Anotações Gerais sobre a matéria de LPC(Laboratório de Programação de Computadores)
 
 ## PEP-8
 - It was written in 2001 by Guido van Rossum, Barry Warsaw, and Nick Coghlan
@@ -43,3 +43,7 @@ def function(arg_one, arg_two,
              arg_three, arg_four):
     return arg_one
 ```
+
+## Links
+
+- [Documentação - Pygame](https://www.pygame.org/)
