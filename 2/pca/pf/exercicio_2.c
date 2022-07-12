@@ -4,11 +4,11 @@
 // Aluno: Gabriel dos Santos Lima
 // Matrícula: 2115310010
 
-#define SIZE 5
+#define SIZE 6
 
 int completaPermutacao(int *lista){
-  int counter = 0, numeroDaSequenciaIdeal = 1; 
-  for(numeroDaSequenciaIdeal = 1; numeroDaSequenciaIdeal <= SIZE; numeroDaSequenciaIdeal++){
+  int counter = 0, numeroDaSequenciaIdeal = lista[0]; 
+  for(numeroDaSequenciaIdeal = lista[0]; numeroDaSequenciaIdeal <= SIZE; numeroDaSequenciaIdeal++){
     bool estaNaSequencia = false;
     for(counter = 0; counter < SIZE - 1; counter++){
       if(numeroDaSequenciaIdeal == lista[counter]){

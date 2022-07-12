@@ -8,7 +8,7 @@
 
 int menorInteiroPositivoDe(int *lista){
   int counter = 0;
-  int menorInteiro = 0;
+  int menorInteiro = lista[0];
   for(counter = 0; counter < SIZE; counter++){
     if(lista[counter] < menorInteiro){
       menorInteiro = lista[counter];
