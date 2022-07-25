@@ -10,13 +10,13 @@ class ItemLista{
   public:
     string nome;
     string genero;
-    double precoUnitario;
+    float precoUnitario;
     int quantidade;
 
     ItemLista(){
     }
 
-    ItemLista(string nome, string genero, double precoUnitario, int quantidade){
+    ItemLista(string nome, string genero, float precoUnitario, int quantidade){
       this->nome = nome;
       this->genero = genero;
       this->precoUnitario = precoUnitario;
@@ -69,28 +69,27 @@ class ListaCompras{
       for(int index = 0; index < this->tamanho; index++){
         cout << "|" << this->lista[index].toString() << "|" << endl;
       }
-      cout.precision(2);
-      cout << "|Total a pagar: R$"<< fixed << to_string(this->totalAPagar()) << "|" << endl;
+      cout << "|Total a pagar: R$" << to_string(this->totalAPagar()) << "|" << endl;
     }
 
-    double totalAPagar(){
-      double total = 0.0;
+    float totalAPagar(){
+      float total = 0.0f;
       for(int index = 0; index < this->tamanho; index++){
         total += this->lista[index].precoUnitario * this->lista[index].quantidade;
       }
       return total;
     }
 
-    ListaCompras maisBaratosQue(double preco){
+    ListaCompras maisBaratosQue(float preco){
       int quantidadeBaratos = 0;
       for(int index = 0; index < this->tamanho; index++){
-        if(this->lista[index].precoUnitario < preco){
+        if(this->lista[index].precoUnitario <= preco){
           quantidadeBaratos++;
         }
       }
       ListaCompras novaLista(quantidadeBaratos);
       for(int index = 0; index < this->tamanho; index++){
-        if(this->lista[index].precoUnitario < preco){
+        if(this->lista[index].precoUnitario <= preco){
           novaLista.insere(this->lista[index]);
         }
       }
@@ -127,7 +126,7 @@ int main(){
         clear();
 
         string nome, genero;
-        double precoUnitario;
+        float precoUnitario;
         int quantidade;
 
         cout << "> Insira o nome do novo item " << ": ";
@@ -150,7 +149,7 @@ int main(){
     lista.imprimeLista();
     cout << "=========================================" << endl;
     
-    double preco = 0.0;
+    float preco = 0.0f;
     cout << "\n> Itens mais baratos que: ";
     cin >> preco;
 
