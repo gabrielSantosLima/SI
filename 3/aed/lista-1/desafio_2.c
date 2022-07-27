@@ -72,7 +72,6 @@ Problema de Josephus
 */ 
 
 NO* josephus(int rodadas){
-    rodadas--;
     NO* inicio = nos;
     while(rodadas > 0){
         if(nos->proximo == NULL){
@@ -87,22 +86,20 @@ NO* josephus(int rodadas){
     printf("%d ", nos->conteudo);
 
     if(quantidade > 1){
-        proximaRodada = nos->conteudo;
-
-        nos->anterior->proximo = nos->proximo;
-
-        if(nos->proximo != NULL){
-            nos->proximo->anterior = nos->anterior;
-        }
-
-        if(nos->proximo == NULL){
+        if(nos->anterior == NULL){
+            nos->proximo->anterior = NULL;
+            nos = nos->proximo;
+        }else if(nos->proximo == NULL){
+            nos->anterior = NULL;
             while(nos->anterior != NULL){
                 nos = nos->anterior;
             }
         }else{
+            nos->anterior->proximo = nos->proximo;
+            nos->proximo->anterior = nos->anterior;
             nos = nos->proximo;
         }
-        quantidade--;
+
     }else{
         return nos;
     }
