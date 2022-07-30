@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define TAMANHO_TOTAL 10
 
 typedef struct NODE
 {
@@ -45,6 +44,12 @@ void inserir(int conteudo)
 void imprimirLista()
 {
     NO *inicio = nos;
+    if(nos->anterior != NULL){
+        while (nos->anterior != NULL)
+        {
+            nos = nos->anterior;
+        }
+    }
     while (nos != NULL)
     {
         printf("%d ", nos->conteudo);
@@ -83,6 +88,7 @@ Problema de Josephus
 
 NO *josephus(int rodadas)
 {
+    printf("Iniciando em: %d\n", nos->conteudo);
     NO *inicio = nos;
     rodadas--;
 
@@ -90,7 +96,10 @@ NO *josephus(int rodadas)
     {
         if (nos->proximo == NULL)
         {
-            nos = inicio;
+            while (nos->anterior != NULL)
+            {
+                nos = nos->anterior;
+            }
         }
         else
         {
@@ -98,12 +107,12 @@ NO *josephus(int rodadas)
         }
         rodadas--;
     }
-    printf("%d -> ", inicio->conteudo);
 
     int proximaRodada;
 
     if (quantidade > 1)
     {
+        printf("Removendo: %d\n", nos->conteudo);
         if (nos->anterior == NULL)
         {
             nos->proximo->anterior = NULL;
@@ -128,10 +137,8 @@ NO *josephus(int rodadas)
         }
         quantidade--;
     }
-    else
-    {
-        return nos;
-    }
+
+    if(quantidade == 1) return nos;
     return josephus(proximaRodada);
 }
 
