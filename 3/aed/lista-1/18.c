@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 typedef struct ITEM
 {
@@ -40,40 +41,86 @@ void add(LIST *list, char *name)
         return;
     }
 
-    ITEM *firstItem = list->item;
-    while (list->item->nextItem != NULL)
+    if (list->size == 1)
     {
+        int order = strcmp(name, list->item->name);
+        if (order == 0 || order > 0)
+        {
+            list->item->nextItem = newItem;
+        }
+        else
+        {
+            newItem->nextItem = list->item;
+            list->item = newItem;
+        }
+        list->size++;
+        return;
+    }
+
+    ITEM *firstItem = list->item;
+    ITEM *lastItem = NULL;
+    while (list->item != NULL)
+    {
+        ITEM *currentItem = list->item;
+        int order = strcmp(name, currentItem->name);
+        if (order == 0)
+        {
+            newItem->nextItem = currentItem->nextItem;
+            currentItem->nextItem = newItem;
+            list->size++;
+            list->item = firstItem;
+            return;
+        }
+        else if (order < 0)
+        {
+            if (lastItem == NULL)
+            {
+                list->item = newItem;
+                newItem->nextItem = currentItem;
+            }
+            else
+            {
+                newItem->nextItem = currentItem;
+                lastItem->nextItem = newItem;
+                list->item = firstItem;
+            }
+            list->size++;
+            return;
+        }
+        lastItem = list->item;
         list->item = list->item->nextItem;
     }
-    list->item->nextItem = newItem;
+    lastItem->nextItem = newItem;
     list->size++;
     list->item = firstItem;
 }
 
-void printAll(LIST *list)
+void printAll(LIST list)
 {
-    if (list->size == 0)
+    if (list.size == 0)
     {
         printf("Lista vazia");
         return;
     }
-    while (list->item != NULL)
+    printf("\n====================\n");
+    while (list.item != NULL)
     {
-        printf("%s ", list->item->name);
-        list->item = list->item->nextItem;
+        printf("%s ", list.item->name);
+        list.item = list.item->nextItem;
     }
 }
 
 int main()
 {
     LIST *list = createList();
-    add(list, (char *)"Gabriel Lima");
-    add(list, (char *)"Guilherme Lima");
-    add(list, (char *)"Jonas Lima");
-    add(list, (char *)"Quevelin Lima");
-    add(list, (char *)"Nara Lima");
-    add(list, (char *)"Presopopeu Lima");
-    add(list, (char *)"Ermanoteu Lima");
-    printAll(list);
+    add(list, (char *)"Gabriel");
+    add(list, (char *)"Guilherme");
+    add(list, (char *)"Jonas");
+    add(list, (char *)"Quevelin");
+    add(list, (char *)"Nara");
+    add(list, (char *)"Arara");
+    add(list, (char *)"Presopopeu");
+    add(list, (char *)"Ermanoteu");
+    printAll(*list);
     return 0;
 }
