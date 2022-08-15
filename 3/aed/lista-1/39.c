@@ -25,22 +25,22 @@ USERS *createList()
     return newUsers;
 }
 
-USER *createUser(char *name, char *dateLogin, char *timeLogin, char *timeLogout)
+USER createUser(char name[], char dateLogin[], char timeLogin[], char timeLogout[])
 {
-    USER *newUser = (USER *)malloc(sizeof(USER));
-    strcpy(newUser->name, name);
-    strcpy(newUser->dateLogin, dateLogin);
-    strcpy(newUser->timeLogin, timeLogin);
-    strcpy(newUser->timeLogout, timeLogout);
+    USER newUser;
+    strcpy(newUser.name, name);
+    strcpy(newUser.dateLogin, dateLogin);
+    strcpy(newUser.timeLogin, timeLogin);
+    strcpy(newUser.timeLogout, timeLogout);
     return newUser;
 }
 
-void add(USERS *users, char *name, char *dateLogin, char *timeLogin, char *timeLogout)
+void add(USERS *users, char name[], char dateLogin[], char timeLogin[], char timeLogout[])
 {
-    USER *newUser = createUser(name, dateLogin, timeLogin, timeLogout);
+    USER newUser = createUser(name, dateLogin, timeLogin, timeLogout);
     if (users->length != MAX_SIZE)
     {
-        users->users[users->length] = *newUser;
+        users->users[users->length] = newUser;
         users->length++;
         return;
     }
@@ -49,7 +49,7 @@ void add(USERS *users, char *name, char *dateLogin, char *timeLogin, char *timeL
 
 void printAll(USERS users)
 {
-    printf("\n========== LISTA ==========\n");
+    printf("========== LISTA ==========\n");
     if (users.length == 0)
     {
         printf("Lista Vazia");
@@ -66,6 +66,16 @@ void printAll(USERS users)
     }
 }
 
+void copyLine(char *destine, char *source, int size)
+{
+    int length = strlen(source);
+    int index;
+    for (index = 0; index < length; index++)
+    {
+        *(destine + index) = *(source + index);
+    }
+}
+
 void readFromFile(USERS *users, char *filename)
 {
     FILE *file;
@@ -75,40 +85,43 @@ void readFromFile(USERS *users, char *filename)
         printf("Erro ao abrir arquivo.");
         return;
     }
-    char content;
-    while (content != EOF)
-    {
-        char name[USERNAME_SIZE] = "";
-        char dateLogin[10] = "";
-        char timeLogin[5] = "";
-        char timeLogout[5] = "";
+    char lines[200];
+    char name[USERNAME_SIZE];
+    char dateLogin[10];
+    char timeLogin[5];
+    char timeLogout[5];
 
-        while (content != '\n')
+    int line = 0;
+    while (fscanf(file, "%s", lines) == 1)
+    {
+        printf("Current Index: %d\n", line);
+        if (line % 4 == 0)
         {
-            strncat(name, &content, 1);
-            content = fgetc(file);
+            copyLine(name, lines, USERNAME_SIZE);
+            printf("Nome: %s\n", name);
         }
-        content = fgetc(file);
-        while (content != '\n')
+        else if (line % 4 == 1)
         {
-            strncat(dateLogin, &content, 1);
-            content = fgetc(file);
+            copyLine(dateLogin, lines, 10);
+            printf("Data: %s\n", dateLogin);
         }
-        content = fgetc(file);
-        while (content != '\n')
+        else if (line % 4 == 2)
         {
-            strncat(timeLogin, &content, 1);
-            content = fgetc(file);
+            copyLine(timeLogin, lines, 5);
+            printf("Hora Login: %s\n", timeLogin);
         }
-        content = fgetc(file);
-        printf("%c", content);
-        while (content != '\n')
+        else if (line % 4 == 3)
         {
-            strncat(timeLogout, &content, 1);
-            content = fgetc(file);
+            copyLine(timeLogout, lines, 5);
+            printf("Hora Logout: %s\n", timeLogout);
+            printf("================================\n");
+            // memset(name, 0, sizeof(name));
+            // memset(dateLogin, 0, sizeof(dateLogin));
+            // memset(timeLogin, 0, sizeof(timeLogin));
+            // memset(timeLogout, 0, sizeof(timeLogout));
+            // add(users, name, dateLogin, timeLogin, timeLogout);
         }
-        content = fgetc(file);
-        add(users, name, dateLogin, timeLogin, timeLogout);
+        line++;
     }
     fclose(file);
 }
@@ -116,7 +129,7 @@ void readFromFile(USERS *users, char *filename)
 int main()
 {
     USERS *users = createList();
-    readFromFile(users, "C:\\Users\\Gabriel\\users.txt");
+    readFromFile(users, (char *)"C:\\Users\\Gabriel\\users.txt");
     printAll(*users);
     return 0;
 }
