@@ -66,16 +66,6 @@ void printAll(USERS users)
     }
 }
 
-void copyLine(char *destine, char *source, int size)
-{
-    int length = strlen(source);
-    int index;
-    for (index = 0; index < length; index++)
-    {
-        *(destine + index) = *(source + index);
-    }
-}
-
 void readFromFile(USERS *users, char *filename)
 {
     FILE *file;
@@ -92,34 +82,36 @@ void readFromFile(USERS *users, char *filename)
     char timeLogout[5];
 
     int line = 0;
+    fgets(name, USERNAME_SIZE, file);
+
+    fgets(dateLogin, 10, file);
+    printf("Nome*: %s\n", name);
+    printf("Data*: %s\n", dateLogin);
+
     while (fscanf(file, "%s", lines) == 1)
     {
-        printf("Current Index: %d\n", line);
         if (line % 4 == 0)
         {
-            copyLine(name, lines, USERNAME_SIZE);
+            strcpy(name, lines);
             printf("Nome: %s\n", name);
         }
         else if (line % 4 == 1)
         {
-            copyLine(dateLogin, lines, 10);
+            strcpy(dateLogin, lines);
             printf("Data: %s\n", dateLogin);
         }
         else if (line % 4 == 2)
         {
-            copyLine(timeLogin, lines, 5);
+            strcpy(timeLogin, lines);
             printf("Hora Login: %s\n", timeLogin);
         }
         else if (line % 4 == 3)
         {
-            copyLine(timeLogout, lines, 5);
+            strcpy(timeLogout, lines);
+            printf("Nome: %s\n", name);
             printf("Hora Logout: %s\n", timeLogout);
+            add(users, name, dateLogin, timeLogin, timeLogout);
             printf("================================\n");
-            // memset(name, 0, sizeof(name));
-            // memset(dateLogin, 0, sizeof(dateLogin));
-            // memset(timeLogin, 0, sizeof(timeLogin));
-            // memset(timeLogout, 0, sizeof(timeLogout));
-            // add(users, name, dateLogin, timeLogin, timeLogout);
         }
         line++;
     }
@@ -129,7 +121,7 @@ void readFromFile(USERS *users, char *filename)
 int main()
 {
     USERS *users = createList();
-    readFromFile(users, (char *)"C:\\Users\\Gabriel\\users.txt");
+    readFromFile(users, (char *)"C:\\Users\\callidus\\users.txt");
     printAll(*users);
     return 0;
 }
