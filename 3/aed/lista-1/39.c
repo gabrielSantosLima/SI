@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX_SIZE 10
-#define USERNAME_SIZE 200
+#define FIELD_SIZE 40
 
 typedef struct USER
 {
-    char name[USERNAME_SIZE];
-    char dateLogin[10];
-    char timeLogin[5];
-    char timeLogout[5];
+    char name[FIELD_SIZE];
+    char dateLogin[FIELD_SIZE];
+    char timeLogin[FIELD_SIZE];
+    char timeLogout[FIELD_SIZE];
 } USER;
 
 typedef struct USERS
@@ -72,48 +72,28 @@ void readFromFile(USERS *users, char *filename)
     file = fopen(filename, "r");
     if (file == NULL)
     {
-        printf("Erro ao abrir arquivo.");
+        printf("Erro ao abrir arquivo.\n");
         return;
     }
-    char lines[200];
-    char name[USERNAME_SIZE];
-    char dateLogin[10];
-    char timeLogin[5];
-    char timeLogout[5];
+    char *lines;
+    char name[FIELD_SIZE];
+    char dateLogin[FIELD_SIZE];
+    char timeLogin[FIELD_SIZE];
+    char timeLogout[FIELD_SIZE];
 
-    int line = 0;
-    fgets(name, USERNAME_SIZE, file);
-
-    fgets(dateLogin, 10, file);
-    printf("Nome*: %s\n", name);
-    printf("Data*: %s\n", dateLogin);
-
-    while (fscanf(file, "%s", lines) == 1)
+    while (lines != NULL)
     {
-        if (line % 4 == 0)
-        {
-            strcpy(name, lines);
-            printf("Nome: %s\n", name);
-        }
-        else if (line % 4 == 1)
-        {
-            strcpy(dateLogin, lines);
-            printf("Data: %s\n", dateLogin);
-        }
-        else if (line % 4 == 2)
-        {
-            strcpy(timeLogin, lines);
-            printf("Hora Login: %s\n", timeLogin);
-        }
-        else if (line % 4 == 3)
-        {
-            strcpy(timeLogout, lines);
-            printf("Nome: %s\n", name);
-            printf("Hora Logout: %s\n", timeLogout);
-            add(users, name, dateLogin, timeLogin, timeLogout);
-            printf("================================\n");
-        }
-        line++;
+        lines = fgets(name, sizeof(name), file);
+        if (lines == NULL)
+            break;
+        lines = fgets(dateLogin, sizeof(dateLogin), file);
+        lines = fgets(timeLogin, sizeof(timeLogin), file);
+        lines = fgets(timeLogout, sizeof(timeLogout), file);
+        strtok(name, "\n");
+        strtok(dateLogin, "\n");
+        strtok(timeLogin, "\n");
+        strtok(timeLogout, "\n");
+        add(users, name, dateLogin, timeLogin, timeLogout);
     }
     fclose(file);
 }
@@ -121,7 +101,7 @@ void readFromFile(USERS *users, char *filename)
 int main()
 {
     USERS *users = createList();
-    readFromFile(users, (char *)"C:\\Users\\callidus\\users.txt");
+    readFromFile(users, (char *)"C:\\Users\\Gabriel\\users.txt");
     printAll(*users);
     return 0;
 }
