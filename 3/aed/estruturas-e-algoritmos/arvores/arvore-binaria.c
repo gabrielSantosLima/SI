@@ -80,13 +80,9 @@ NODE *findNodeWithParent(NODE *root, int value, NODE **parent)
             return root;
         *parent = root;
         if (value < root->value)
-        {
             root = root->leftNode;
-        }
         else
-        {
             root = root->rightNode;
-        }
     }
     return NULL;
 }
@@ -115,6 +111,7 @@ void removeNode(TREE *tree, NODE *root, int value)
 
     node = findNodeWithParent(root, value, &nodeParent);
 
+    // Verifica se nó a ser removido possui 0 ou 1 filho(s).
     if (node->rightNode == NULL || node->leftNode == NULL)
     {
         if (node->leftNode == NULL)
@@ -124,6 +121,7 @@ void removeNode(TREE *tree, NODE *root, int value)
     }
     else
     {
+        // Busca nó mais a direita na sub-árvore da direita.
         substituteNodeParent = node;
         substituteNode = node->leftNode;
         while (substituteNode->rightNode != NULL)
@@ -134,12 +132,16 @@ void removeNode(TREE *tree, NODE *root, int value)
 
         if (substituteNodeParent != node)
         {
-            substituteNodeParent->rightNode = substituteNode->rightNode;
+            // Pai do substituto assumir os filhos do nó que será movido de lugar.
+            substituteNodeParent->rightNode = substituteNode->leftNode;
+            // Nó substituto assume novo filho esquerdo.
             substituteNode->leftNode = node->leftNode;
         }
+        // Nó substituto assume novo filho direito.
         substituteNode->rightNode = node->rightNode;
     }
 
+    // Verifica se nó a ser removido é o nó raiz
     if (nodeParent == NULL)
     {
         free(node);
@@ -147,15 +149,14 @@ void removeNode(TREE *tree, NODE *root, int value)
         return;
     }
 
+    // Finalmente, remove nó de interesse e faz nó pai assumir novo filho (nó substituto)
     if (value < nodeParent->value)
-    {
         nodeParent->leftNode = substituteNode;
-    }
     else
-    {
         nodeParent->rightNode = substituteNode;
-    }
     free(node);
+
+    // Assume nova raiz
     tree->root = root;
 }
 
