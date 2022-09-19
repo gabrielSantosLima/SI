@@ -29,7 +29,7 @@ NODE *createNode(int value)
   return newNode;
 }
 
-void insert(TREE *tree, NODE *root, int value)
+void insertNode(TREE *tree, NODE *root, int value)
 {
   if (tree->root == NULL)
   {
@@ -40,14 +40,14 @@ void insert(TREE *tree, NODE *root, int value)
   if (value < root->value)
   {
     if (root->left != NULL)
-      return insert(tree, root->left, value);
+      return insertNode(tree, root->left, value);
     NODE *newNode = createNode(value);
     root->left = newNode;
   }
   else
   {
     if (root->right != NULL)
-      return insert(tree, root->right, value);
+      return insertNode(tree, root->right, value);
     NODE *newNode = createNode(value);
     root->right = newNode;
   }
@@ -78,12 +78,12 @@ int heightOf(NODE *root, int level)
 int main()
 {
   TREE *tree = createTree();
-  insert(tree, tree->root, 10);
-  insert(tree, tree->root, 4);
-  insert(tree, tree->root, 15);
-  insert(tree, tree->root, 12);
-  insert(tree, tree->root, 16);
-  insert(tree, tree->root, 13);
+  insertNode(tree, tree->root, 10);
+  insertNode(tree, tree->root, 4);
+  insertNode(tree, tree->root, 15);
+  insertNode(tree, tree->root, 12);
+  insertNode(tree, tree->root, 16);
+  insertNode(tree, tree->root, 13);
   printAll(tree->root);
   printf("\nTamanho da Árvore: %d", heightOf(tree->root, 0));
   return 0;

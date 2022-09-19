@@ -29,7 +29,7 @@ NODE *createNode(int value)
     return newNode;
 }
 
-void insert(TREE *tree, NODE *root, int value)
+void insertNode(TREE *tree, NODE *root, int value)
 {
     if (tree->root == NULL)
     {
@@ -40,14 +40,14 @@ void insert(TREE *tree, NODE *root, int value)
     if (value < root->value)
     {
         if (root->left != NULL)
-            return insert(tree, root->left, value);
+            return insertNode(tree, root->left, value);
         NODE *newNode = createNode(value);
         root->left = newNode;
     }
     else
     {
         if (root->right != NULL)
-            return insert(tree, root->right, value);
+            return insertNode(tree, root->right, value);
         NODE *newNode = createNode(value);
         root->right = newNode;
     }
@@ -57,7 +57,7 @@ void insertTreeWithMaxHeight(TREE *tree)
 {
     int index = 1;
     for (index = 1; index <= 17; index++)
-        insert(tree, tree->root, index);
+        insertNode(tree, tree->root, index);
 }
 
 void insertTreeWithMinHeight(TREE *tree, int start, int end)
@@ -66,7 +66,7 @@ void insertTreeWithMinHeight(TREE *tree, int start, int end)
     int middle = (start + end) / 2;
     if (start > end)
         return;
-    insert(tree, tree->root, numbers[middle]);
+    insertNode(tree, tree->root, numbers[middle]);
     insertTreeWithMinHeight(tree, start, middle - 1);
     insertTreeWithMinHeight(tree, middle + 1, end);
 }

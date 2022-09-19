@@ -29,7 +29,7 @@ NODE *createNode(int value)
     return newNode;
 }
 
-void insert(TREE *tree, NODE *root, int value)
+void insertNode(TREE *tree, NODE *root, int value)
 {
     if (tree->root == NULL)
     {
@@ -40,14 +40,14 @@ void insert(TREE *tree, NODE *root, int value)
     if (value < root->value)
     {
         if (root->left != NULL)
-            return insert(tree, root->left, value);
+            return insertNode(tree, root->left, value);
         NODE *newNode = createNode(value);
         root->left = newNode;
     }
     else
     {
         if (root->right != NULL)
-            return insert(tree, root->right, value);
+            return insertNode(tree, root->right, value);
         NODE *newNode = createNode(value);
         root->right = newNode;
     }
@@ -74,14 +74,14 @@ int getFirstElementInPreOrder(NODE *root)
 int main()
 {
     TREE *tree = createTree();
-    insert(tree, tree->root, 10);
-    insert(tree, tree->root, 3);
-    insert(tree, tree->root, 23);
-    insert(tree, tree->root, 27);
-    insert(tree, tree->root, 7);
-    insert(tree, tree->root, 1);
-    insert(tree, tree->root, 9);
-    insert(tree, tree->root, 99);
+    insertNode(tree, tree->root, 10);
+    insertNode(tree, tree->root, 3);
+    insertNode(tree, tree->root, 23);
+    insertNode(tree, tree->root, 27);
+    insertNode(tree, tree->root, 7);
+    insertNode(tree, tree->root, 1);
+    insertNode(tree, tree->root, 9);
+    insertNode(tree, tree->root, 99);
     printAll(tree->root);
     printf("\nFIRST: %d", getFirstElementInPreOrder(tree->root));
     return 0;

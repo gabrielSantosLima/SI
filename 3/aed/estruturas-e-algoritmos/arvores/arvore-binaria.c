@@ -99,65 +99,59 @@ NODE *findNodeWithParent(NODE *root, int value, NODE **parent)
     4. Caso contrário, fazemos o pai do elemento a ser removido apontar para o nó substituto, eliminando
     o nó de interesse.
 */
-void removeNode(TREE *tree, NODE *root, int value)
+void removeNode(TREE *tree, int value)
 {
-    if (tree->root == NULL || tree->length == 0)
+    NODE *node = NULL, *parent = NULL, *substituteNode = NULL, *substituteNodeParent = NULL;
+    node = findNodeWithParent(tree->root, value, &parent);
+    if (node == NULL) // Verifica se elemento que quero remover existe.
         return;
-
-    NODE *node = NULL;
-    NODE *nodeParent = NULL;
-    NODE *substituteNode = NULL;
-    NODE *substituteNodeParent = NULL;
-
-    node = findNodeWithParent(root, value, &nodeParent);
-
-    // Verifica se nó a ser removido possui 0 ou 1 filho(s).
-    if (node->rightNode == NULL || node->leftNode == NULL)
+    if (node->leftNode == NULL || node->rightNode == NULL) // Possui 1 ou nenhum filho.
     {
         if (node->leftNode == NULL)
             substituteNode = node->rightNode;
         else if (node->rightNode == NULL)
             substituteNode = node->leftNode;
     }
-    else
+    else // Possui os dois filhos.
     {
-        // Busca nó mais a direita na sub-árvore da direita.
         substituteNodeParent = node;
         substituteNode = node->leftNode;
-        while (substituteNode->rightNode != NULL)
+        while (substituteNode->rightNode != NULL) // Busca nó substituto mais a direita na sub-árvore da esquerda.
         {
             substituteNodeParent = substituteNode;
             substituteNode = substituteNode->rightNode;
         }
 
+        /* Quando pai do substituto é igual ao elemento que eu quero remover, quer dizer que o elemento que
+        quero remover (node) possui apenas um filho à esquerda (não entrou no loop para buscar elementos a direita
+        pois substituteNode->rightNode == NULL). Por conta disso, nós alteramos o valor a esquerda do nó substituto apenas
+        quando substituteNodeParent != node. Caso contrário, ficará em loop infinito visto que o elemento substituto é
+        o próprio node->leftNode.
+        */
         if (substituteNodeParent != node)
         {
-            // Pai do substituto assumir os filhos do nó que será movido de lugar.
+            /* Pai do substituto adota filho do nó substituto que irá sair de sua posição atual. Como o nó substituto
+            é o elemento mais a direita, o elemento que seu pai irá adotar será, logicamente, o filho da esquerda (pois
+            ele já é o elemento mais a direita).
+            */
             substituteNodeParent->rightNode = substituteNode->leftNode;
-            // Nó substituto assume novo filho esquerdo.
-            substituteNode->leftNode = node->leftNode;
+            substituteNode->leftNode = node->leftNode; // Muda filho da esquerda do nó substituto.
         }
-        // Nó substituto assume novo filho direito.
-        substituteNode->rightNode = node->rightNode;
+        substituteNode->rightNode = node->rightNode; // Muda filho da direita do nó substituto.
     }
 
-    // Verifica se nó a ser removido é o nó raiz
-    if (nodeParent == NULL)
+    if (parent == NULL) // Verifica se nó que quer remover é a raiz.
     {
+        tree->root = substituteNode; // Elemento substituto vira a nova raiz.
         free(node);
-        tree->root = substituteNode;
         return;
     }
 
-    // Finalmente, remove nó de interesse e faz nó pai assumir novo filho (nó substituto)
-    if (value < nodeParent->value)
-        nodeParent->leftNode = substituteNode;
+    if (value < parent->value) // Altera referência do pai do elemento que quero remover para o nó substituto.
+        parent->leftNode = substituteNode;
     else
-        nodeParent->rightNode = substituteNode;
+        parent->rightNode = substituteNode;
     free(node);
-
-    // Assume nova raiz
-    tree->root = root;
 }
 
 void printAll(NODE *root)
@@ -187,7 +181,7 @@ int main()
     insertNode(tree, tree->root, 10);
 
     printAll(tree->root);
-    removeNode(tree, tree->root, 15);
+    removeNode(tree, 15);
     printAll(tree->root);
 
     // NODE *node = findNode(tree->root, 10);
