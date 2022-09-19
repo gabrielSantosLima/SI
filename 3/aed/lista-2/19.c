@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define true 1
+#define false 0
+
+typedef int bool;
+
 typedef struct NODE
 {
     int value;
@@ -61,13 +66,16 @@ void printAll(NODE *root)
     printf(")");
 }
 
-int leafsSize(NODE *root)
+bool isValid(NODE *root)
 {
     if (root == NULL)
-        return 0;
-    if (root->right == NULL && root->left == NULL)
-        return 1;
-    return leafsSize(root->left) + leafsSize(root->right);
+        return true;
+    if ((root->left && root->value < root->left->value) ||
+        (root->right && root->value > root->right->value))
+        return false;
+    if (!isValid(root->left) || !isValid(root->right))
+        return false;
+    return true;
 }
 
 int main()
@@ -82,6 +90,11 @@ int main()
     insertNode(tree, tree->root, 10);
     insertNode(tree, tree->root, 12);
     printAll(tree->root);
-    printf("\nFolhas: %d", leafsSize(tree->root));
+
+    bool valid = isValid(tree->root);
+    if (valid)
+        printf("\nÁrvore é válida.");
+    else
+        printf("\nÁrvore não é válida.");
     return 0;
 }

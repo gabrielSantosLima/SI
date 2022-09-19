@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define true 1
+#define false 0
+
+typedef int bool;
+
 typedef struct NODE
 {
     int value;
@@ -61,17 +66,22 @@ void printAll(NODE *root)
     printf(")");
 }
 
-int leafsSize(NODE *root)
+bool isEqual(NODE *root, NODE *root2)
 {
-    if (root == NULL)
-        return 0;
-    if (root->right == NULL && root->left == NULL)
-        return 1;
-    return leafsSize(root->left) + leafsSize(root->right);
+    if (root == NULL && root2 == NULL)
+        return true;
+    if (root == NULL || root2 == NULL)
+        return false;
+    if (root->value != root2->value)
+        return false;
+    if (!isEqual(root->left, root2->left) || !isEqual(root->right, root2->right))
+        return false;
+    return true;
 }
 
 int main()
 {
+    printf("Árvore 1: \n");
     TREE *tree = createTree();
     insertNode(tree, tree->root, 9);
     insertNode(tree, tree->root, 3);
@@ -82,6 +92,25 @@ int main()
     insertNode(tree, tree->root, 10);
     insertNode(tree, tree->root, 12);
     printAll(tree->root);
-    printf("\nFolhas: %d", leafsSize(tree->root));
+
+    printf("\nÁrvore 2: \n");
+
+    TREE *tree2 = createTree();
+    insertNode(tree2, tree2->root, 9);
+    insertNode(tree2, tree2->root, 13);
+    insertNode(tree2, tree2->root, 3);
+    insertNode(tree2, tree2->root, 14);
+    insertNode(tree2, tree2->root, 11);
+    insertNode(tree2, tree2->root, 1);
+    insertNode(tree2, tree2->root, 12);
+    insertNode(tree2, tree2->root, 10);
+    printAll(tree2->root);
+
+    bool treeIsEqual = isEqual(tree->root, tree2->root);
+
+    if (treeIsEqual)
+        printf("\n\nÁrvores são iguais.");
+    else
+        printf("\n\nÁrvores são diferentes.");
     return 0;
 }

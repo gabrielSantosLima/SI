@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define true 1
+#define false 0
+
+typedef int bool;
+
 typedef struct NODE
 {
     int value;
@@ -61,13 +66,15 @@ void printAll(NODE *root)
     printf(")");
 }
 
-int leafsSize(NODE *root)
+bool contain(NODE *root, int value)
 {
     if (root == NULL)
-        return 0;
-    if (root->right == NULL && root->left == NULL)
-        return 1;
-    return leafsSize(root->left) + leafsSize(root->right);
+        return false;
+    if (root->value == value)
+        return true;
+    if (!contain(root->left, value) && !contain(root->right, value))
+        return false;
+    return true;
 }
 
 int main()
@@ -82,6 +89,11 @@ int main()
     insertNode(tree, tree->root, 10);
     insertNode(tree, tree->root, 12);
     printAll(tree->root);
-    printf("\nFolhas: %d", leafsSize(tree->root));
+
+    bool exists = contain(tree->root, 10);
+    if (exists)
+        printf("\nElemento existe.");
+    else
+        printf("\nElemento não existe.");
     return 0;
 }
