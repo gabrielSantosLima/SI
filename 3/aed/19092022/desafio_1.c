@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// ============================= ÁRVORE =============================
+
 typedef struct NODE
 {
     int value;
@@ -133,21 +135,26 @@ void printAll(NODE *root, int level)
     printAll(root->rightNode, level + 1);
 }
 
+// ============================= FILA =============================
+
 typedef struct ITEM
 {
     int value;
+    NODE *original;
     struct ITEM *next;
 } ITEM;
 
 typedef struct QUEUE
 {
+    int length;
     ITEM *start;
     ITEM *end;
 } QUEUE;
 
-ITEM *createItem(int value)
+ITEM *createItem(int value, NODE *original)
 {
     ITEM *newNodeList = (ITEM *)malloc(sizeof(ITEM));
+    newNodeList->original = original;
     newNodeList->value = value;
     newNodeList->next = NULL;
     return newNodeList;
@@ -157,13 +164,15 @@ QUEUE *createQueue()
 {
     QUEUE *newQueue = (QUEUE *)malloc(sizeof(QUEUE));
     newQueue->start = NULL;
+    newQueue->length = 0;
     newQueue->end = NULL;
     return newQueue;
 }
 
-void push(QUEUE *queue, int value)
+void push(QUEUE *queue, int value, NODE *original)
 {
-    ITEM *newItem = createItem(value);
+    ITEM *newItem = createItem(value, original);
+    queue->length++;
     if (queue->start == NULL)
     {
 
@@ -175,22 +184,22 @@ void push(QUEUE *queue, int value)
     queue->end = newItem;
 }
 
-void pop(QUEUE *queue)
+ITEM *pop(QUEUE *queue)
 {
     if (queue->start == NULL)
-        return;
-
+        return NULL;
+    queue->length--;
     if (queue->start == queue->end)
     {
-        free(queue->start);
+        ITEM *aux = queue->start;
         queue->start = NULL;
         queue->end = NULL;
-        return;
+        return aux;
     }
 
-    ITEM *lastStartItem = queue->start;
-    queue->start = lastStartItem->next;
-    free(lastStartItem);
+    ITEM *aux = queue->start;
+    queue->start = aux->next;
+    return aux;
 }
 
 void printAllQueue(ITEM *item)
@@ -204,24 +213,26 @@ void printAllQueue(ITEM *item)
     }
 }
 
-ITEM *treeToList(NODE *root)
+// ============================= CÓDIGO DO PROBLEMA =============================
+
+ITEM *percurso_por_nivel(NODE *root)
 {
     if (root == NULL)
         return NULL;
     QUEUE *queue = createQueue();
-    push(queue, root->value);
-    NODE *currentRoot = root, *left = NULL, *right = NULL;
-    while (currentRoot != NULL)
+    QUEUE *finalQueue = createQueue();
+    push(queue, root->value, root);
+    while (queue->length > 0)
     {
-        if (currentRoot->leftNode != NULL)
-            push(queue, currentRoot->leftNode->value);
-        if (currentRoot->rightNode != NULL)
-        {
-            push(queue, currentRoot->rightNode->value);
-        }
-        currentRoot = currentRoot->leftNode;
+        ITEM *removedItem = pop(queue);
+        push(finalQueue, removedItem->value, NULL);
+        NODE *originalNode = removedItem->original;
+        if (originalNode->leftNode != NULL)
+            push(queue, originalNode->leftNode->value, originalNode->leftNode);
+        if (originalNode->rightNode != NULL)
+            push(queue, originalNode->rightNode->value, originalNode->rightNode);
     }
-    return queue->start;
+    return finalQueue->start;
 }
 
 int main()
@@ -240,8 +251,10 @@ int main()
     insertNode(tree, tree->root, 20);
     printAll(tree->root, 0);
 
-    ITEM *list = treeToList(tree->root);
+    ITEM *list = percurso_por_nivel(tree->root);
     printf("Transformando em uma fila contendo cada nível temos:\n");
+    // Resultado esperado: 8 6 10 3 7 9 15 1 4 14 20
+
     printAllQueue(list);
     return 0;
 }
