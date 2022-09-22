@@ -43,3 +43,28 @@
 |**Pré-ordem**|**R**|E|D|
 |**In-ordem**|E|**R**|D|
 |**Pós-ordem**|E|D|**R**|
+
+# Aula do dia 21/09/2022
+
+## Árvore AVL
+
+- Possui um fator de balanceamento
+- Fator de balancemento: **Altura da sub-árvore da direita** - **Altura da sub-árvore da esquerda**
+- Para que uma árvore esteja balanceada, **|fator de balanceamento| < 2**
+
+### Lidando com o desbalanceamento
+- Quando uma árvore ficar desbalanceada precisamos:
+  - Buscar o primeiro ancestral com fator de desbalanceamento != 0 (A)
+  - Encontra seu filho na direção da inserção (B)
+  - B vira pai de A
+
+|Tipo de Rotação|A|B|
+|---|---|---|
+|RSE (Rotação simples para a esquerda)| + | + |
+|RSD (Rotação simples para a direita)| - | - |
+|RDE (Rotação dupla para a esquerda)| + | - |
+|RDD (Rotação dupla para a direita)| - | + |
+
+> RDE = RSD + RSE
+> 
+> RDD = RSE + RSD
