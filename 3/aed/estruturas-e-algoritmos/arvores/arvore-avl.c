@@ -102,33 +102,70 @@ NODE *findFirstAncestral(NODE *root, NODE **ancestral)
     return right;
 }
 
+void rotateLeft(NODE *a, NODE *b)
+{
+    int aValue = a->value;
+    a->value = b->value;
+    b->value = aValue;
+
+    a->right = b->right;
+    b->right = b->left;
+    b->left = a->left;
+    a->left = b;
+}
+
+void rotateRight(NODE *a, NODE *b)
+{
+    int aValue = a->value;
+    a->value = b->value;
+    b->value = aValue;
+
+    a->left = b->left;
+    b->left = b->right;
+    b->right = a->right;
+    a->right = b;
+}
+
 void rebalanceAfterInsert(TREE *tree)
 {
-    NODE *ancestral = NULL;
-    NODE *node = findFirstAncestral(tree->root, &ancestral);
+    NODE *a = NULL;
+    NODE *node = findFirstAncestral(tree->root, &a);
     calculateBalanceFactor(tree->root);
     if (!isUnbalanced(tree->root))
         return;
-    NODE *ancestralChild = ancestral->left;
-    if (node->value >= ancestral->value)
-        ancestralChild = ancestral->right;
+    NODE *b = a->left;
+    if (node->value >= a->value)
+        b = a->right;
 
-    if (isPositive(ancestral->balanceFactor) && isPositive(ancestralChild->balanceFactor))
+    if (isPositive(a->balanceFactor) && isPositive(b->balanceFactor))
     {
         // Rotação simples para a esquerda
+        rotateLeft(a, b);
     }
-    else if (isNegative(ancestral->balanceFactor) && isNegative(ancestralChild->balanceFactor))
+    else if (isNegative(a->balanceFactor) && isNegative(b->balanceFactor))
     {
         // Rotação simples para a direita
+        rotateRight(a, b);
     }
-    else if (isPositive(ancestral->balanceFactor) && isNegative(ancestralChild->balanceFactor))
+    else if (isPositive(a->balanceFactor) && isNegative(b->balanceFactor))
     {
+        NODE *c = b->left;
+        if (node->value >= b->value)
+            c = b->right;
         // Rotação dupla para a esquerda
+        rotateRight(b, c);
+        rotateLeft(a, b);
     }
-    else if (isNegative(ancestral->balanceFactor) && isPositive(ancestralChild->balanceFactor))
+    else if (isNegative(a->balanceFactor) && isPositive(b->balanceFactor))
     {
+        NODE *c = b->left;
+        if (node->value >= b->value)
+            c = b->right;
         // Rotação dupla para a direita
+        rotateLeft(b, c);
+        rotateRight(a, b);
     }
+    calculateBalanceFactor(tree->root);
 }
 
 void insert(TREE *tree, NODE *root, int value)
@@ -171,11 +208,21 @@ void printAll(NODE *root, int level)
 int main()
 {
     TREE *tree = createTree();
-    insert(tree, tree->root, 15);
     insert(tree, tree->root, 10);
     insert(tree, tree->root, 20);
+    insert(tree, tree->root, 15);
     insert(tree, tree->root, 60);
     insert(tree, tree->root, 50);
+    insert(tree, tree->root, 5);
+    insert(tree, tree->root, 3);
+    insert(tree, tree->root, 4);
+    insert(tree, tree->root, 82);
+    insert(tree, tree->root, 100);
+    insert(tree, tree->root, 115);
+    insert(tree, tree->root, 111);
+    insert(tree, tree->root, 99);
+    insert(tree, tree->root, 30);
+    insert(tree, tree->root, 90);
     printAll(tree->root, 0);
     return 0;
 }
