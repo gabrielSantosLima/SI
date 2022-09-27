@@ -205,6 +205,105 @@ void printAll(NODE *root, int level)
     printAll(root->right, level + 1);
 }
 
+NODE *findNodeWithParent(NODE *root, int value, NODE **parent)
+{
+    if (root == NULL)
+        return NULL;
+    *parent = NULL;
+    while (root != NULL)
+    {
+        if (value == root->value)
+            return root;
+        *parent = root;
+        if (value < root->value)
+            root = root->left;
+        else
+            root = root->right;
+    }
+    return NULL;
+}
+
+void removeNode(TREE *tree, int value)
+{
+    NODE *node = NULL, *parent = NULL, *substituteNode = NULL, *substituteNodeParent = NULL;
+    node = findNodeWithParent(tree->root, value, &parent);
+    if (node == NULL)
+        return;
+    if (node->left == NULL || node->right == NULL)
+    {
+        if (node->left == NULL)
+            substituteNode = node->right;
+        else if (node->right == NULL)
+            substituteNode = node->left;
+    }
+    else
+    {
+        substituteNodeParent = node;
+        substituteNode = node->left;
+        while (substituteNode->right != NULL)
+        {
+            substituteNodeParent = substituteNode;
+            substituteNode = substituteNode->right;
+        }
+
+        if (substituteNodeParent != node)
+        {
+            substituteNodeParent->right = substituteNode->left;
+            substituteNode->left = node->left;
+        }
+        substituteNode->right = node->right;
+    }
+
+    if (parent == NULL)
+    {
+        tree->root = substituteNode;
+        free(node);
+        calculateBalanceFactor(tree->root);
+        return;
+    }
+
+    if (value < parent->value)
+        parent->left = substituteNode;
+    else
+        parent->right = substituteNode;
+    free(node);
+    calculateBalanceFactor(tree->root);
+}
+
+void rebalanceAfterRemoveNode(TREE *tree)
+{
+    while (isUnbalanced(tree->root))
+    {
+        NODE *a = NULL;
+        NODE *b = NULL;
+        NODE *node = NULL; // Elemento que foi removido
+
+        // Buscar primeiro ancestral com BF diferente de 0 e seu filho (no sentido inverso do elemento que foi removido)
+
+        if (isPositive(a->balanceFactor) && isPositive(b->balanceFactor))
+            rotateLeft(a, b);
+        else if (isNegative(a->balanceFactor) && isNegative(b->balanceFactor))
+            rotateRight(a, b);
+        else if (isPositive(a->balanceFactor) && isNegative(b->balanceFactor))
+        {
+            NODE *c = b->left;
+            if (node->value >= b->value)
+                c = b->right;
+            rotateRight(b, c);
+            rotateLeft(a, b);
+        }
+        else if (isNegative(a->balanceFactor) && isPositive(b->balanceFactor))
+        {
+            NODE *c = b->left;
+            if (node->value >= b->value)
+                c = b->right;
+            rotateLeft(b, c);
+            rotateRight(a, b);
+        }
+        calculateBalanceFactor(tree->root);
+    }
+}
+
 int main()
 {
     TREE *tree = createTree();
@@ -223,6 +322,7 @@ int main()
     insert(tree, tree->root, 99);
     insert(tree, tree->root, 30);
     insert(tree, tree->root, 90);
+    removeNode(tree, 10);
     printAll(tree->root, 0);
     return 0;
 }
