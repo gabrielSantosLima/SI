@@ -68,3 +68,27 @@
 > RDE = RSD + RSE
 > 
 > RDD = RSE + RSD
+
+## Árvore Rubro-negras
+- É uma árvore binária de busca
+- Cada nó tem duas cores: **vermelho** e **preto**
+- A raiz é **preta**
+- Cada folha é **preta**
+- Nós vermelhos possuem apenas **nós pretos**
+- Nós pretos possuem **nós pretos** e **nós vermelhos**
+- A partir de cada nó x, temos **a mesma quantidade de nós pretos por todos os caminhos até as suas folhas (contando com NULL)**
+
+### Balanceamento
+- 1-5 garantem que a árvore esteja **aproximadamente balanceada**
+```c
+struct NODE{
+  char color;
+  int value;
+  struct NODE* left;
+  struct NODE* right;
+  struct NODE* parent;
+};
+```
+#### Desafio
+- Escolher 12 número e inserir
+- Escolher uma árvore pronta e remover 4 elementos
