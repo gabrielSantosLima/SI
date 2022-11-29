@@ -27,3 +27,9 @@
 ## :hourglass: Fim do curso
 
 > 2025
+
+## Autor
+
+| <img src="https://github.com/gabrielSantosLima.png" width="80"/> |
+| ---------------------------------------------------------------- |
+| [Gabriel Lima🚀](https://github.com/gabrielSantosLima)           |
