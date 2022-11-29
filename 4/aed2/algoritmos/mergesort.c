@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-#define MAX 10
+#define MAX 1000
 #define false 0
 #define true 1
 
@@ -117,17 +118,19 @@ void mergeSort(ARRAY *array, int start, int end)
     merge(array, start, middle, end);
 }
 
+void test1000(){
+    ARRAY *array = newArray(MAX);
+    srand(time(NULL));
+    for(int index = 0; index < MAX; index++){
+        int number = rand() % (MAX + 1);
+        add(array, number);
+    }
+    mergeSort(array, 0, array->lenght - 1);
+    printArray(array);
+}
+
 int main()
 {
-    ARRAY *array = newArray(MAX);
-    add(array, 1);
-    add(array, 10);
-    add(array, 7);
-    add(array, 70);
-    add(array, 25);
-    add(array, 26);
-    add(array, 9);
-    mergeSort(array, 0, array->lenght - 1);
-    printArray(array); // Should results: 1 7 9 10 25 26 70
+    test1000();
     return 0;
 }
