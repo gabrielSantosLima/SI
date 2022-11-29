@@ -3,7 +3,6 @@
 
 #define false 0
 #define true 1
-#define DEFAULT_BF 3
 
 typedef int bool;
 
@@ -13,6 +12,7 @@ typedef struct NODE
     int balanceFactor;
     struct NODE *left;
     struct NODE *right;
+    struct NODE *parent;
 } NODE;
 
 typedef struct TREE
@@ -24,9 +24,10 @@ NODE *createNode(int value)
 {
     NODE *newNode = (NODE *)malloc(sizeof(NODE));
     newNode->value = value;
-    newNode->balanceFactor = DEFAULT_BF;
+    newNode->balanceFactor = 0;
     newNode->left = NULL;
     newNode->right = NULL;
+    newNode->parent = NULL;
     return newNode;
 }
 
@@ -87,19 +88,11 @@ bool isUnbalanced(NODE *root)
     return false;
 }
 
-NODE *findFirstAncestral(NODE *root, NODE **ancestral)
+NODE *findFirstAncestral(NODE *node)
 {
-    if (root == NULL)
-        return NULL;
-    if (root->balanceFactor == DEFAULT_BF)
-        return root;
-    if (root->balanceFactor != 0)
-        *ancestral = root;
-    NODE *left = findFirstAncestral(root->left, ancestral);
-    if (left != NULL)
-        return left;
-    NODE *right = findFirstAncestral(root->right, ancestral);
-    return right;
+    while (node != NULL && node->balanceFactor == 0)
+        node = node->parent;
+    return node;
 }
 
 void rotateLeft(NODE *a, NODE *b)
@@ -108,6 +101,7 @@ void rotateLeft(NODE *a, NODE *b)
     a->value = b->value;
     b->value = aValue;
 
+    // Operações de rotação
     a->right = b->right;
     b->right = b->left;
     b->left = a->left;
@@ -120,23 +114,25 @@ void rotateRight(NODE *a, NODE *b)
     a->value = b->value;
     b->value = aValue;
 
+    // Operações de rotação
     a->left = b->left;
     b->left = b->right;
     b->right = a->right;
     a->right = b;
 }
 
-void rebalanceAfterInsert(TREE *tree)
+void rebalance(TREE *tree, NODE *node)
 {
     NODE *a = NULL;
-    NODE *node = findFirstAncestral(tree->root, &a);
+    a = findFirstAncestral(node);
     calculateBalanceFactor(tree->root);
-    if (!isUnbalanced(tree->root))
+    if (!isUnbalanced(tree->root) || a == NULL)
         return;
     NODE *b = a->left;
     if (node->value >= a->value)
         b = a->right;
-
+    if (b == NULL)
+        return;
     if (isPositive(a->balanceFactor) && isPositive(b->balanceFactor))
     {
         // Rotação simples para a esquerda
@@ -183,6 +179,8 @@ void insert(TREE *tree, NODE *root, int value)
             return insert(tree, root->left, value);
         NODE *node = createNode(value);
         root->left = node;
+        node->parent = root;
+        rebalance(tree, node);
     }
     else
     {
@@ -190,8 +188,9 @@ void insert(TREE *tree, NODE *root, int value)
             return insert(tree, root->right, value);
         NODE *node = createNode(value);
         root->right = node;
+        node->parent = root;
+        rebalance(tree, node);
     }
-    rebalanceAfterInsert(tree);
 }
 
 void printAll(NODE *root, int level)
@@ -205,36 +204,41 @@ void printAll(NODE *root, int level)
     printAll(root->right, level + 1);
 }
 
-NODE *findNodeWithParent(NODE *root, int value, NODE **parent)
+NODE *findNode(NODE *root, int value)
 {
     if (root == NULL)
         return NULL;
-    *parent = NULL;
-    while (root != NULL)
-    {
-        if (value == root->value)
-            return root;
-        *parent = root;
-        if (value < root->value)
-            root = root->left;
-        else
-            root = root->right;
-    }
-    return NULL;
+    if (root->value == value)
+        return root;
+    if (value < root->value)
+        return findNode(root->left, value);
+    return findNode(root->right, value);
+}
+
+void rebalanceAfterRemoveNode(TREE *tree, NODE *node)
+{
+    while (isUnbalanced(tree->root))
+        rebalance(tree, node);
 }
 
 void removeNode(TREE *tree, int value)
 {
     NODE *node = NULL, *parent = NULL, *substituteNode = NULL, *substituteNodeParent = NULL;
-    node = findNodeWithParent(tree->root, value, &parent);
+    node = findNode(tree->root, value);
     if (node == NULL)
         return;
+    parent = node->parent;
     if (node->left == NULL || node->right == NULL)
     {
         if (node->left == NULL)
             substituteNode = node->right;
         else if (node->right == NULL)
             substituteNode = node->left;
+
+        if (substituteNode != NULL && substituteNode->left != NULL)
+            substituteNode->left->parent = substituteNode->parent;
+        if (substituteNode != NULL && substituteNode->right != NULL)
+            substituteNode->right->parent = substituteNode->parent;
     }
     else
     {
@@ -246,6 +250,11 @@ void removeNode(TREE *tree, int value)
             substituteNode = substituteNode->right;
         }
 
+        if (substituteNode->left != NULL)
+            substituteNode->left->parent = substituteNode->parent;
+        if (substituteNode->right != NULL)
+            substituteNode->right->parent = substituteNode->parent;
+
         if (substituteNodeParent != node)
         {
             substituteNodeParent->right = substituteNode->left;
@@ -254,11 +263,17 @@ void removeNode(TREE *tree, int value)
         substituteNode->right = node->right;
     }
 
+    if (node->left != NULL)
+        node->left->parent = substituteNode;
+    if (node->right != NULL)
+        node->right->parent = substituteNode;
+
     if (parent == NULL)
     {
+        substituteNode->parent = NULL;
         tree->root = substituteNode;
+        rebalanceAfterRemoveNode(tree, node);
         free(node);
-        calculateBalanceFactor(tree->root);
         return;
     }
 
@@ -266,42 +281,8 @@ void removeNode(TREE *tree, int value)
         parent->left = substituteNode;
     else
         parent->right = substituteNode;
+    rebalanceAfterRemoveNode(tree, node);
     free(node);
-    calculateBalanceFactor(tree->root);
-}
-
-void rebalanceAfterRemoveNode(TREE *tree)
-{
-    while (isUnbalanced(tree->root))
-    {
-        NODE *a = NULL;
-        NODE *b = NULL;
-        NODE *node = NULL; // Elemento que foi removido
-
-        // Buscar primeiro ancestral com BF diferente de 0 e seu filho (no sentido inverso do elemento que foi removido)
-
-        if (isPositive(a->balanceFactor) && isPositive(b->balanceFactor))
-            rotateLeft(a, b);
-        else if (isNegative(a->balanceFactor) && isNegative(b->balanceFactor))
-            rotateRight(a, b);
-        else if (isPositive(a->balanceFactor) && isNegative(b->balanceFactor))
-        {
-            NODE *c = b->left;
-            if (node->value >= b->value)
-                c = b->right;
-            rotateRight(b, c);
-            rotateLeft(a, b);
-        }
-        else if (isNegative(a->balanceFactor) && isPositive(b->balanceFactor))
-        {
-            NODE *c = b->left;
-            if (node->value >= b->value)
-                c = b->right;
-            rotateLeft(b, c);
-            rotateRight(a, b);
-        }
-        calculateBalanceFactor(tree->root);
-    }
 }
 
 int main()
@@ -322,7 +303,7 @@ int main()
     insert(tree, tree->root, 99);
     insert(tree, tree->root, 30);
     insert(tree, tree->root, 90);
-    removeNode(tree, 10);
+    removeNode(tree, 15);
     printAll(tree->root, 0);
     return 0;
 }

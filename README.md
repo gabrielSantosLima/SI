@@ -18,6 +18,12 @@
 - Algoritmo e Estrutura de Dados I
 - Sistemas Operacionais
 
+### 4 Período
+
+- Algoritmo e Estrutura de Dados II
+- Paradigmas De Linguagens De Programação
+- Banco De Dados I
+
 ## :hourglass: Fim do curso
 
 > 2025
