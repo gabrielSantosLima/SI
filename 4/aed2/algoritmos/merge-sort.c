@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX 1000
 #define false 0
 #define true 1
 
@@ -12,7 +11,7 @@ typedef struct ARRAY
 {
     int lenght;
     int maxLength;
-    int *data;
+    long *data;
 } ARRAY;
 
 ARRAY *newArray(int maxLength)
@@ -20,7 +19,7 @@ ARRAY *newArray(int maxLength)
     ARRAY *newArray = (ARRAY *)malloc(sizeof(ARRAY));
     newArray->lenght = 0;
     newArray->maxLength = maxLength;
-    newArray->data = (int *)malloc(sizeof(int) * maxLength);
+    newArray->data = (long *)malloc(sizeof(long) * maxLength);
     return newArray;
 }
 
@@ -36,7 +35,7 @@ bool isFull(ARRAY *array)
            (array != NULL && array->lenght == array->maxLength);
 }
 
-void add(ARRAY *array, int value)
+void add(ARRAY *array, long value)
 {
     if (isFull(array))
         return;
@@ -49,7 +48,7 @@ void printArray(ARRAY *array)
     if (isEmpty(array))
         return;
     for (int index = 0; index < array->lenght; index++)
-        printf("%d ", array->data[index]);
+        printf("%lu ", array->data[index]);
 }
 
 void merge(ARRAY *array, int start, int middle, int end)
@@ -100,7 +99,7 @@ void merge(ARRAY *array, int start, int middle, int end)
     free(right);
 }
 
-/* Merge-Sort:
+/* ==================== Merge-Sort ====================
 - Divide-and-conquer algorithm
 
 Steps:
@@ -117,12 +116,13 @@ void mergeSort(ARRAY *array, int start, int end)
     mergeSort(array, middle + 1, end);
     merge(array, start, middle, end);
 }
+// =====================================================
 
 void test1000(){
-    ARRAY *array = newArray(MAX);
+    ARRAY *array = newArray(1000);
     srand(time(NULL));
-    for(int index = 0; index < MAX; index++){
-        int number = rand() % (MAX + 1);
+    for(int index = 0; index < 1000; index++){
+        long number = rand() % 1000;
         add(array, number);
     }
     mergeSort(array, 0, array->lenght - 1);
