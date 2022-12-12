@@ -12,57 +12,53 @@ typedef int bool;
 typedef struct ARRAY
 {
     int lenght;
-    int maxLength;
+    int size;
     double *data;
 } ARRAY;
 
-ARRAY *newArray(int maxLength)
+ARRAY *new_array(int size)
 {
-    ARRAY *newArray = (ARRAY *)malloc(sizeof(ARRAY));
-    newArray->lenght = 0;
-    newArray->maxLength = maxLength;
-    newArray->data = (double *)malloc(sizeof(double) * maxLength);
-    return newArray;
+    ARRAY *narray = (ARRAY *)malloc(sizeof(ARRAY));
+    narray->lenght = 0;
+    narray->size = size;
+    narray->data = (double *)malloc(sizeof(double) * size);
+    return narray;
 }
 
-bool isEmpty(ARRAY *array)
+bool is_empty(ARRAY *array)
 {
     return array == NULL ||
            (array != NULL && array->lenght == 0);
 }
 
-bool isFull(ARRAY *array)
+bool is_full(ARRAY *array)
 {
     return array == NULL ||
-           (array != NULL && array->lenght == array->maxLength);
+           (array != NULL && array->lenght == array->size);
 }
 
 void add(ARRAY *array, double value)
 {
-    if (isFull(array))
+    if (is_full(array))
         return;
     array->data[array->lenght] = value;
     array->lenght++;
 }
 
-void printArray(ARRAY *array)
+void print_array(ARRAY *array)
 {
-    if (isEmpty(array))
+    if (is_empty(array))
         return;
     for (int index = 0; index < array->lenght; index++)
         printf("%.2f ", array->data[index]);
 }
 
-ARRAY *concat(ARRAY *arrays[], int maxLength)
+ARRAY *concat(ARRAY *arrays[], int size)
 {
-    ARRAY *array = newArray(maxLength);
-    for (int index = 0; index < maxLength; index++)
-    {
+    ARRAY *array = new_array(size);
+    for (int index = 0; index < size; index++)
         for (int elementIndex = 0; elementIndex < arrays[index]->lenght; elementIndex++)
-        {
             add(array, arrays[index]->data[elementIndex]);
-        }
-    }
     return array;
 }
 // =====================================================
@@ -71,7 +67,7 @@ ARRAY *concat(ARRAY *arrays[], int maxLength)
 typedef struct NODE
 {
     double value;
-    struct NODE *nextNode;
+    struct NODE *next_node;
 } NODE;
 
 typedef struct LIST
@@ -80,20 +76,20 @@ typedef struct LIST
     NODE *data;
 } LIST;
 
-LIST *newList()
+LIST *new_list()
 {
-    LIST *newList = (LIST *)malloc(sizeof(LIST));
-    newList->data = NULL;
-    newList->length = 0;
-    return newList;
+    LIST *nlist = (LIST *)malloc(sizeof(LIST));
+    nlist->data = NULL;
+    nlist->length = 0;
+    return nlist;
 }
 
-NODE *createNode(double value)
+NODE *create_node(double value)
 {
-    NODE *newNode = (NODE *)malloc(sizeof(NODE));
-    newNode->value = value;
-    newNode->nextNode = NULL;
-    return newNode;
+    NODE *nnode = (NODE *)malloc(sizeof(NODE));
+    nnode->value = value;
+    nnode->next_node = NULL;
+    return nnode;
 }
 
 void push(LIST *list, double value)
@@ -102,18 +98,18 @@ void push(LIST *list, double value)
         return;
     if (list->length == 0)
     {
-        list->data = createNode(value);
+        list->data = create_node(value);
         list->length++;
         return;
     }
-    NODE *auxNode = list->data;
-    while (auxNode->nextNode != NULL)
-        auxNode = auxNode->nextNode;
-    auxNode->nextNode = createNode(value);
+    NODE *aux_node = list->data;
+    while (aux_node->next_node != NULL)
+        aux_node = aux_node->next_node;
+    aux_node->next_node = create_node(value);
     list->length++;
 }
 
-void printList(LIST *list)
+void print_list(LIST *list)
 {
     if (list == NULL || (list != NULL && list->length == 0))
     {
@@ -124,40 +120,40 @@ void printList(LIST *list)
     while (node != NULL)
     {
         printf("%.2f ", node->value);
-        node = node->nextNode;
+        node = node->next_node;
     }
 }
 
 // =====================================================
 
 /* ==================== Bucket Sort ==================== */
-void printBuckets(LIST *buckets[], int length)
+void print_buckets(LIST *buckets[], int length)
 {
     for (int index = 0; index < length; index++)
     {
         printf("Bucket %d: ", index);
-        printList(buckets[index]);
+        print_list(buckets[index]);
         printf("\n");
     }
 }
 
-ARRAY *listToArray(LIST *list)
+ARRAY *list_2_array(LIST *list)
 {
     if (list == NULL)
         return NULL;
-    ARRAY *array = newArray(list->length);
-    NODE *auxNode = list->data;
-    while (auxNode != NULL)
+    ARRAY *array = new_array(list->length);
+    NODE *aux_node = list->data;
+    while (aux_node != NULL)
     {
-        add(array, auxNode->value);
-        auxNode = auxNode->nextNode;
+        add(array, aux_node->value);
+        aux_node = aux_node->next_node;
     }
     return array;
 }
 
-void insertionSort(ARRAY *array)
+void insertion_sort(ARRAY *array)
 {
-    if (isEmpty(array) || (!isEmpty(array) && array->lenght == 1))
+    if (is_empty(array) || (!is_empty(array) && array->lenght == 1))
         return;
     for (int index = 1; index < array->lenght; index++)
     {
@@ -172,37 +168,36 @@ void insertionSort(ARRAY *array)
     }
 }
 
-void bucketSort(ARRAY *array, int maxLength)
+void bucket_sort(ARRAY *array)
 {
-    LIST *buckets[maxLength];
-    for (int index = 0; index < maxLength; index++)
+    if (array == NULL || is_empty(array))
+        return;
+    int size = array->size;
+    LIST *buckets[size];
+    for (int index = 0; index < size; index++)
+        buckets[index] = new_list();
+    for (int index = 0; index < size; index++)
     {
-        buckets[index] = newList();
-    }
-    for (int index = 0; index < maxLength; index++)
-    {
-        int position = floor(maxLength * array->data[index]);
+        int position = floor(size * array->data[index]);
         push(buckets[position], array->data[index]);
     }
-    printBuckets(buckets, maxLength);
-    ARRAY *bucketsAsArray[maxLength];
-    for (int index = 0; index < maxLength; index++)
+    print_buckets(buckets, size);
+    ARRAY *buckets_as_array[size];
+    for (int index = 0; index < size; index++)
     {
-        ARRAY *bucketAsArray = listToArray(buckets[index]);
-        insertionSort(bucketAsArray);
-        bucketsAsArray[index] = bucketAsArray;
+        ARRAY *bucketAsArray = list_2_array(buckets[index]);
+        insertion_sort(bucketAsArray);
+        buckets_as_array[index] = bucketAsArray;
     }
-    ARRAY *sortedArray = concat(bucketsAsArray, maxLength);
-    for (int index = 0; index < sortedArray->lenght; index++)
-    {
-        array->data[index] = sortedArray->data[index];
-    }
+    ARRAY *sorted_array = concat(buckets_as_array, size);
+    for (int index = 0; index < sorted_array->lenght; index++)
+        array->data[index] = sorted_array->data[index];
 }
 // =====================================================
 
-void test1000()
+void test_1000()
 {
-    ARRAY *array = newArray(1000);
+    ARRAY *array = new_array(1000);
     srand(time(NULL));
     for (int index = 0; index < 1000; index++)
     {
@@ -210,12 +205,12 @@ void test1000()
         number /= 100;
         add(array, number);
     }
-    bucketSort(array, 1000);
-    printArray(array);
+    bucket_sort(array);
+    print_array(array);
 }
 
 int main()
 {
-    test1000();
+    test_1000();
     return 0;
 }

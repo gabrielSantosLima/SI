@@ -10,51 +10,51 @@ typedef int bool;
 typedef struct ARRAY
 {
     int lenght;
-    int maxLength;
+    int size;
     int *data;
 } ARRAY;
 
-ARRAY *newArray(int maxLength)
+ARRAY *new_array(int maxLength)
 {
     ARRAY *newArray = (ARRAY *)malloc(sizeof(ARRAY));
     newArray->lenght = 0;
-    newArray->maxLength = maxLength;
+    newArray->size = maxLength;
     newArray->data = (int *)malloc(sizeof(int) * maxLength);
     return newArray;
 }
 
-bool isEmpty(ARRAY *array)
+bool is_empty(ARRAY *array)
 {
     return array == NULL ||
            (array != NULL && array->lenght == 0);
 }
 
-bool isFull(ARRAY *array)
+bool is_full(ARRAY *array)
 {
     return array == NULL ||
-           (array != NULL && array->lenght == array->maxLength);
+           (array != NULL && array->lenght == array->size);
 }
 
 void add(ARRAY *array, int value)
 {
-    if (isFull(array))
+    if (is_full(array))
         return;
     array->data[array->lenght] = value;
     array->lenght++;
 }
 
-void printArray(ARRAY *array)
+void print_array(ARRAY *array)
 {
-    if (isEmpty(array))
+    if (is_empty(array))
         return;
     for (int index = 0; index < array->lenght; index++)
         printf("%d ", array->data[index]);
 }
 
 /* ==================== Insertion-Sort ==================== */
-void insertionSort(ARRAY *array)
+void insertion_sort(ARRAY *array)
 {
-    if(isEmpty(array) || (!isEmpty(array) && array->lenght == 1)) return;
+    if(is_empty(array) || (!is_empty(array) && array->lenght == 1)) return;
     for(int index = 1; index < array->lenght; index++){
         int key = array->data[index];
         int i = index - 1;
@@ -67,19 +67,19 @@ void insertionSort(ARRAY *array)
 }
 // =====================================================
 
-void test1000(){
-    ARRAY *array = newArray(1000);
+void test_1000(){
+    ARRAY *array = new_array(1000);
     srand(time(NULL));
     for(int index = 0; index < 1000; index++){
         int number = rand() % 1000;
         add(array, number);
     }
-    insertionSort(array);
-    printArray(array);
+    insertion_sort(array);
+    print_array(array);
 }
 
 int main()
 {
-    test1000();
+    test_1000();
     return 0;
 }

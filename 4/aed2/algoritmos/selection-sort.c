@@ -1,27 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #define true 1
 #define false 0
 
 typedef int bool;
 
-// ==================== Array ====================
-
+// ====================== ARRAY ======================
 typedef struct ARRAY
 {
-    int *data;
     int length;
     int size;
+    int *data;
 } ARRAY;
 
 ARRAY *new_array(int size)
 {
-    ARRAY *array = (ARRAY *)malloc(sizeof(ARRAY));
-    array->data = (int *)malloc(size * sizeof(int));
-    array->size = size;
-    array->length = 0;
-    return array;
+    ARRAY *narray = (ARRAY *)malloc(sizeof(ARRAY));
+    narray->length = 0;
+    narray->size = size;
+    narray->data = (int *)malloc(size * sizeof(int));
+    return narray;
 }
 
 bool is_empty(ARRAY *array)
@@ -50,39 +50,30 @@ void print_array(ARRAY *array)
         printf("%d ", array->data[index]);
     printf("\n");
 }
-// ===============================================
-// ==================== Bubble Sort ====================
+// ============================================================
 
+// ====================== Selection Sort ======================
 void swap(ARRAY *array, int from, int to)
 {
-    if (array == NULL || is_empty(array) || array->length <= from || array->length <= to)
+    if (array == NULL || (array != NULL && (from >= array->length || to >= array->length || from == to)))
         return;
     int tmp_value = array->data[from];
     array->data[from] = array->data[to];
     array->data[to] = tmp_value;
 }
 
-void bubble_sort(ARRAY *array)
+void selection_sort(ARRAY *array)
 {
-    if (array == NULL || is_empty(array))
-        return;
-    bool swapped = false;
     for (int i = 0; i < array->length - 1; i++)
     {
-        for (int j = 0; j < array->length - i - 1; j++)
-        {
-            if (array->data[j] > array->data[j + 1])
-            {
-                swap(array, j, j + 1);
-                swapped = true;
-            }
-        }
-        if (!swapped)
-            return;
+        int min_value_index = i;
+        for (int j = i + 1; j < array->length; j++)
+            if (array->data[j] < array->data[min_value_index])
+                min_value_index = j;
+        swap(array, i, min_value_index);
     }
 }
-// ===============================================
-
+// ============================================================
 void test_1000()
 {
     ARRAY *array = new_array(1000);
@@ -92,7 +83,7 @@ void test_1000()
         long number = rand() % 1000;
         add(array, number);
     }
-    bubble_sort(array);
+    selection_sort(array);
     print_array(array);
 }
 

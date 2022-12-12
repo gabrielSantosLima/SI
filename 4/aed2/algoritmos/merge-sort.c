@@ -10,42 +10,42 @@ typedef int bool;
 typedef struct ARRAY
 {
     int lenght;
-    int maxLength;
+    int size;
     long *data;
 } ARRAY;
 
-ARRAY *newArray(int maxLength)
+ARRAY *new_array(int size)
 {
-    ARRAY *newArray = (ARRAY *)malloc(sizeof(ARRAY));
-    newArray->lenght = 0;
-    newArray->maxLength = maxLength;
-    newArray->data = (long *)malloc(sizeof(long) * maxLength);
-    return newArray;
+    ARRAY *narray = (ARRAY *)malloc(sizeof(ARRAY));
+    narray->lenght = 0;
+    narray->size = size;
+    narray->data = (long *)malloc(sizeof(long) * size);
+    return narray;
 }
 
-bool isEmpty(ARRAY *array)
+bool is_empty(ARRAY *array)
 {
     return array == NULL ||
            (array != NULL && array->lenght == 0);
 }
 
-bool isFull(ARRAY *array)
+bool is_full(ARRAY *array)
 {
     return array == NULL ||
-           (array != NULL && array->lenght == array->maxLength);
+           (array != NULL && array->lenght == array->size);
 }
 
 void add(ARRAY *array, long value)
 {
-    if (isFull(array))
+    if (is_full(array))
         return;
     array->data[array->lenght] = value;
     array->lenght++;
 }
 
-void printArray(ARRAY *array)
+void print_array(ARRAY *array)
 {
-    if (isEmpty(array))
+    if (is_empty(array))
         return;
     for (int index = 0; index < array->lenght; index++)
         printf("%lu ", array->data[index]);
@@ -53,21 +53,21 @@ void printArray(ARRAY *array)
 
 void merge(ARRAY *array, int start, int middle, int end)
 {
-    int leftSize = middle - start + 1;
-    int rightSize = end - middle;
-    ARRAY *left = newArray(leftSize);
-    ARRAY *right = newArray(rightSize);
+    int left_size = middle - start + 1;
+    int right_size = end - middle;
+    ARRAY *left = new_array(left_size);
+    ARRAY *right = new_array(right_size);
 
-    for (int index = 0; index < leftSize; index++)
+    for (int index = 0; index < left_size; index++)
         add(left, array->data[start + index]);
 
-    for (int index = 0; index < rightSize; index++)
+    for (int index = 0; index < right_size; index++)
         add(right, array->data[middle + 1 + index]);
 
     int i = 0;
     int j = 0;
     int index = start;
-    while (i < leftSize && j < rightSize)
+    while (i < left_size && j < right_size)
     {
         if (left->data[i] <= right->data[j])
         {
@@ -82,14 +82,14 @@ void merge(ARRAY *array, int start, int middle, int end)
         index++;
     }
 
-    while (i < leftSize)
+    while (i < left_size)
     {
         array->data[index] = left->data[i];
         i++;
         index++;
     }
 
-    while (j < rightSize)
+    while (j < right_size)
     {
         array->data[index] = right->data[j];
         j++;
@@ -106,31 +106,33 @@ Steps:
     - Split the array in two parts (D&C)
     - Sort the arrays and merge on the whole
 */
-void mergeSort(ARRAY *array, int start, int end)
+void merge_sort(ARRAY *array, int start, int end)
 {
-    if (isEmpty(array) || start >= end)
+    if (is_empty(array) || start >= end)
         return;
     int size = end - start;
     int middle = start + size / 2;
-    mergeSort(array, start, middle);
-    mergeSort(array, middle + 1, end);
+    merge_sort(array, start, middle);
+    merge_sort(array, middle + 1, end);
     merge(array, start, middle, end);
 }
 // =====================================================
 
-void test1000(){
-    ARRAY *array = newArray(1000);
+void test_1000()
+{
+    ARRAY *array = new_array(1000);
     srand(time(NULL));
-    for(int index = 0; index < 1000; index++){
+    for (int index = 0; index < 1000; index++)
+    {
         long number = rand() % 1000;
         add(array, number);
     }
-    mergeSort(array, 0, array->lenght - 1);
-    printArray(array);
+    merge_sort(array, 0, array->lenght - 1);
+    print_array(array);
 }
 
 int main()
 {
-    test1000();
+    test_1000();
     return 0;
 }
