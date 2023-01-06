@@ -1,0 +1,17 @@
+{
+  "name": "udp-server",
+  "version": "1.0.0",
+  "description": "An UDP socket using Node.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "UDP",
+    "Socket",
+    "Network",
+    "Node.js"
+  ],
+  "author": "Gabriel Lima",
+  "license": "ISC"
+}
